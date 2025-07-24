@@ -20,12 +20,15 @@ export class ListController {
   }
 
   @Put(':id')
-  updateList(id: string, @Body() { title, description }: CreateToDoDto) {
+  updateList(
+    @Param('id') id: string,
+    @Body() { title, description }: CreateToDoDto
+  ) {
     return this.listService.updateList(id, title, description);
   }
 
   @Delete(':id')
-  deleteList(id: string) {
+  deleteList(@Param('id') id: string) {
     return this.listService.deleteList(id);
   }
 
@@ -34,7 +37,7 @@ export class ListController {
     return this.listService.getAllLists();
   }
   @Get(':id')
-  getListById(id: string) {
+  getListById(@Param('id') id: string) {
     return this.listService.getListById(id);
   }
 

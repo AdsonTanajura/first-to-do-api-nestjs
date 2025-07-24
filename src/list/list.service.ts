@@ -11,7 +11,13 @@ export class ListService {
   ) {}
 
   async createList({ title, description }: CreateToDoDto): Promise<List> {
-    const newList = this.listRepository.create({ title, description });
+    const id = crypto.randomUUID();
+    const fortId = 'todo-' + id;
+    const newList = this.listRepository.create({
+      title,
+      description,
+      id: fortId,
+    });
     return this.listRepository.save(newList);
   }
 

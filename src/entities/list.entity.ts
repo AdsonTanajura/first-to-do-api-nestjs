@@ -1,20 +1,26 @@
-import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity()
-
 export class List {
-    @PrimaryGeneratedColumn()
-    id: string;
+  @PrimaryColumn()
+  id: string;
 
-    @Column()
-    title: string
+  @Column()
+  title: string;
 
-    @Column()
-    description: string
+  @Column()
+  description: string;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
