@@ -46,8 +46,8 @@ export class ListController {
     return this.listService.getListById(id);
   }
 
-  /* @Get('search/:term')
-  searchByTitle(@Param('term') term: string) {
-    return this.listService.searchByTitle(term);
-  } */
+  @Get('search/:term')
+  searchByTitle(@Param('term') term: string, @Request() req) {
+    return this.listService.searchByTitle(term, req.user.userId);
+  }
 }

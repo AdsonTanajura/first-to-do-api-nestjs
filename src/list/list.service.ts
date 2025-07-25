@@ -1,28 +1,41 @@
-import { Body, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateToDoDto } from 'src/dto/create-to-do.dto';
 import { List } from 'src/entity/list.entity';
+import { User } from 'src/entity/user.entity';
 import { Like, Repository } from 'typeorm';
 
 @Injectable()
 export class ListService {
   constructor(
-    @InjectRepository(List) private listRepository: Repository<List>
+    @InjectRepository(List) private listRepository: Repository<List>,
+    @InjectRepository(User) private userRepository: Repository<User>
   ) {}
 
-  async createList({ title, description }: CreateToDoDto): Promise<List> {
-    const id = crypto.randomUUID();
-    const fortId = 'todo-' + id;
+  async createList(
+    { title, description }: CreateToDoDto,
+    userId: string
+  ): Promise<List> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const listId = crypto.randomUUID();
+    const formtListId = 'todo-' + listId;
     const newList = this.listRepository.create({
       title,
       description,
-      id: fortId,
+      id: formtListId,
+      user: user,
     });
+
     return this.listRepository.save(newList);
   }
 
-  async getAllLists(): Promise<List[]> {
-    return this.listRepository.find();
+  async getAllListsByUser(userId: string): Promise<List[]> {
+    return this.listRepository.find({ where: { user: { id: userId } } });
   }
 
   async getListById(id: string): Promise<List> {
@@ -33,9 +46,9 @@ export class ListService {
     }
   }
 
-  async searchByTitle(term: string): Promise<List[]> {
+  async searchByTitle(term: string, id: string): Promise<List[]> {
     if (!term) {
-      return this.getAllLists();
+      return this.getAllListsByUser(id);
     }
     return this.listRepository.find({
       where: { title: Like(`%${term}%`) },
