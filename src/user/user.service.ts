@@ -49,19 +49,6 @@ export class UserService {
     return !!user;
   }
 
-  async loginUser({ email, password }: LoginUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { email: email },
-      select: ['id', 'name', 'email', 'password'],
-    });
-
-    if (!user || user.password !== password) {
-      throw new Error('Invalid credentials');
-    }
-
-    return user;
-  }
-
   async findAllUsers(): Promise<User[]> {
     const users = this.userRepository.find();
     return users;
