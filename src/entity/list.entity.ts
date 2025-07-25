@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryColumn,
+  ManyToOne,
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class List {
@@ -23,4 +25,7 @@ export class List {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.lists)
+  user: User;
 }

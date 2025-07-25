@@ -1,7 +1,7 @@
 import { Body, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateToDoDto } from 'src/dto/create-to-do.dto';
-import { List } from 'src/entities/list.entity';
+import { List } from 'src/entity/list.entity';
 import { Like, Repository } from 'typeorm';
 
 @Injectable()
