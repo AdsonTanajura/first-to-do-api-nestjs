@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { List } from './list.entity';
+import { List } from 'src/list/entity/list.entity';
 
 @Entity()
 export class User {
@@ -30,4 +30,8 @@ export class User {
 
   @OneToMany(() => List, (list) => list.user)
   lists: List[];
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

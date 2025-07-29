@@ -1,44 +1,38 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginUserDto } from 'src/dto/login-user.dto';
+import { v4 as uuidv4 } from 'uuid';
 import { RegisterUserDto } from 'src/dto/register-user.dto';
-import { User } from 'src/entity/user.entity';
+import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
+import { UserFactory } from './user.factory';
+import { UserResponseDto } from './dto/use-responde.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private userFactory: UserFactory
   ) {}
 
   async registerUser({
     email,
     name,
     password,
-  }: RegisterUserDto): Promise<User> {
-    const formtEmail = email.toLowerCase().replace(/\s/g, '');
-    const emailExists = await this.emailExists(formtEmail);
-
-    if (emailExists) {
-      throw new BadRequestException('Email already exists');
-    }
-
-    const id = crypto.randomUUID();
-    const fortId = 'user-' + id;
-    const formatName = name.toLowerCase().trim();
-
-    const user = this.userRepository.create({
-      name: formatName,
-      email: formtEmail,
+  }: RegisterUserDto): Promise<UserResponseDto> {
+    const user = this.userFactory.createUser({
+      email,
+      name,
       password,
-      id: fortId,
     });
 
-    this.userRepository.save(user);
+    if (await this.emailExists(user.email)) {
+      throw new BadRequestException('Email already exists');
+    }
+    await this.userRepository.save(user);
 
-    const userWithoutPassword = { ...user, password: '' };
+    const { password: _, ...userWithoutPassword } = user;
 
-    return userWithoutPassword;
+    return userWithoutPassword as UserResponseDto;
   }
 
   async emailExists(email: string): Promise<boolean> {
@@ -50,7 +44,9 @@ export class UserService {
   }
 
   async findAllUsers(): Promise<User[]> {
-    const users = this.userRepository.find();
+    const users = await this.userRepository.find({
+      select: ['id', 'name', 'email'],
+    });
     return users;
   }
 }

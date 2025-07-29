@@ -1,14 +1,12 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryColumn,
   ManyToOne,
 } from 'typeorm';
-import { User } from './user.entity';
-
+import { User } from 'src/user/entity/user.entity';
 @Entity()
 export class List {
   @PrimaryColumn()
