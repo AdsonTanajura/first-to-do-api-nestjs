@@ -6,9 +6,16 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ListModule, TypeOrmModule.forRoot(typeOrmConfig), UserModule, AuthModule],
+  imports: [
+    ListModule,
+    TypeOrmModule.forRoot(typeOrmConfig),
+    UserModule,
+    AuthModule,
+    ConfigModule.forRoot(),
+  ],
   controllers: [AppController, UserController],
 })
 export class AppModule {}
