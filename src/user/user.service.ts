@@ -6,12 +6,14 @@ import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { UserFactory } from './user.factory';
 import { UserResponseDto } from './dto/use-responde.dto';
+import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    private userFactory: UserFactory
+    private userFactory: UserFactory,
+    private readonly awsService: AwsService
   ) {}
 
   async registerUser({
@@ -33,6 +35,18 @@ export class UserService {
     const { password: _, ...userWithoutPassword } = user;
 
     return userWithoutPassword as UserResponseDto;
+  }
+
+  async uploadProfileImage(file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+    const url = await this.awsService.uploadFile(file, 'profile-images');
+
+    // Aqui você pode atualizar o usuário com a URL:
+    // await this.userRepository.update(userId, { profileImage: url });
+
+    return { url };
   }
 
   async emailExists(email: string): Promise<boolean> {
